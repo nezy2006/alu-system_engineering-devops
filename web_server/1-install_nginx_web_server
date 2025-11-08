@@ -1,22 +1,15 @@
-nstall_nginx_web_server
-# Installs and configures nginx to serve "Holberton School"
+#!/usr/bin/env bash
+# Installs and configures Nginx to serve "Holberton School" at / on a new Ubuntu machine
 
-# Update package list and install nginx
+# Update package list and install nginx non-interactively
 apt-get update -y
 apt-get install -y nginx
 
-# Ensure Nginx is listening on port 80
-# By default, Nginx config listens on 80, but we can overwrite default
-DEFAULT_CONF="/etc/nginx/sites-available/default"
-
-# Backup original config
-cp $DEFAULT_CONF ${DEFAULT_CONF}.bak
-
-# Replace root / index content with "Holberton School for the win!"
+# Ensure the root index page contains "Holberton School"
 cat > /var/www/html/index.nginx-debian.html <<EOF
 Holberton School for the win!
 EOF
 
-# Ensure Nginx service is started (use service command, not systemctl)
+# Restart nginx using the service command (not systemctl)
 service nginx restart
 

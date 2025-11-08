@@ -1,18 +1,26 @@
-#!/usr/bin/env bash
-# Bash script to transfer a file to a remote server
+#!/bin/bash
 
-# Check number of arguments
-if [ "$#" -lt 4 ]; then
+# Script to transfer a file from client to server using SCP
+
+# Check if exactly 4 parameters are passed
+if [ $# -lt 4 ]; then
     echo "Usage: 0-transfer_file PATH_TO_FILE IP USERNAME PATH_TO_SSH_KEY"
     exit 1
 fi
 
-# Assign arguments to variables
+# Assign parameters to variables
 FILE_PATH=$1
 SERVER_IP=$2
 USERNAME=$3
 SSH_KEY=$4
 
-# Transfer the file to the user's home directory using scp
+# Perform SCP transfer to user's home directory (~) on the server
 scp -i "$SSH_KEY" -o StrictHostKeyChecking=no "$FILE_PATH" "$USERNAME@$SERVER_IP:~/"
+
+# Optional: print a success message
+if [ $? -eq 0 ]; then
+    echo "File '$FILE_PATH' successfully transferred to $USERNAME@$SERVER_IP:~/"
+else
+    echo "File transfer failed!"
+fi
 

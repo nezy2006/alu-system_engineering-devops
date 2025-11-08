@@ -1,15 +1,24 @@
 #!/usr/bin/env bash
 # Installs and configures Nginx to serve "Holberton School" at / on a new Ubuntu machine
 
-# Update package list and install nginx non-interactively
+# Update package list and install nginx
 apt-get update -y
 apt-get install -y nginx
 
-# Ensure the root index page contains "Holberton School"
-cat > /var/www/html/index.nginx-debian.html <<EOF
+# Detect Nginx root directory from default site config
+NGINX_ROOT=$(grep -m1 'root ' /etc/nginx/sites-available/default | awk '{print $2}' | sed 's/;//')
+
+# Create the root directory if it doesn't exist
+mkdir -p "$NGINX_ROOT"
+
+# Overwrite the index.html with the required content
+cat > "$NGINX_ROOT/index.html" <<EOF
 Holberton School for the win!
 EOF
 
-# Restart nginx using the service command (not systemctl)
+# Set proper permissions
+chmod 644 "$NGINX_ROOT/index.html"
+
+# Restart nginx using service (not systemctl)
 service nginx restart
 

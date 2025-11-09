@@ -1,0 +1,22 @@
+sh script to install Nginx and configure /redirect_me to permanently redirect (301)
+
+# Update package lists
+apt-get update -y
+
+# Install Nginx
+apt-get install -y nginx
+
+# Start Nginx
+service nginx start
+
+# Replace default index page
+echo "Holberton School" > /var/www/html/index.html
+
+# Configure redirect using sed to edit default server block
+# We'll add a location block for /redirect_me
+# The redirect target URL can be YouTube (example from Readme)
+sed -i '/server_name _;/a \\n    location /redirect_me {\n        return 301 https://www.youtube.com/watch?v=QH2-TGUlwu4;\n    }' /etc/nginx/sites-available/default
+
+# Reload Nginx to apply changes
+service nginx reload
+

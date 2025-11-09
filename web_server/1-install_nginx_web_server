@@ -1,24 +1,19 @@
-#!/usr/bin/env bash
-# Installs and configures Nginx to serve "Holberton School" at / on a new Ubuntu machine
+#!/bin/bash
+# Bash script to install Nginx and serve "Holberton School for the win!"
+# Works without systemctl
 
-# Update package list and install nginx
+# Update package lists
 apt-get update -y
+
+# Install nginx if not installed
 apt-get install -y nginx
 
-# Detect Nginx root directory from default site config
-NGINX_ROOT=$(grep -m1 'root ' /etc/nginx/sites-available/default | awk '{print $2}' | sed 's/;//')
+# Start nginx using service (avoiding systemctl)
+service nginx start
 
-# Create the root directory if it doesn't exist
-mkdir -p "$NGINX_ROOT"
+# Create the required HTML page
+echo "Holberton School for the win!" > /var/www/html/index.html
 
-# Overwrite the index.html with the required content
-cat > "$NGINX_ROOT/index.html" <<EOF
-Holberton School for the win!
-EOF
-
-# Set proper permissions
-chmod 644 "$NGINX_ROOT/index.html"
-
-# Restart nginx using service (not systemctl)
-service nginx restart
+# Reload nginx to make sure the new page is served
+service nginx reload
 

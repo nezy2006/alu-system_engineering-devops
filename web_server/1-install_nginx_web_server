@@ -1,19 +1,18 @@
-#!/bin/bash
-# Bash script to install Nginx and serve "Holberton School for the win!"
-# Works without systemctl
+#!/usr/bin/env bash
+# Bash script to install Nginx on Ubuntu and serve "Holberton School" on port 80
 
-# Update package lists
+# Update Ubuntu package lists
 apt-get update -y
 
-# Install nginx if not installed
+# Install Nginx
 apt-get install -y nginx
 
-# Start nginx using service (avoiding systemctl)
+# Start Nginx using service (without using systemctl)
 service nginx start
 
-# Create the required HTML page
-echo "Holberton School for the win!" > /var/www/html/index.html
+# Create the required HTML page at root
+echo "Holberton School" > /var/www/html/index.html
 
-# Reload nginx to make sure the new page is served
+# Reload Nginx to apply changes
 service nginx reload
 

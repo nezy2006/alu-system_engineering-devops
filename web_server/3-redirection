@@ -1,4 +1,5 @@
-onfigures Nginx on a new Ubuntu machine to redirect /redirect_me permanently
+#!/usr/bin/env bash
+#configures Nginx on a new Ubuntu machine to redirect /redirect_me permanently
 
 set -e
 
@@ -43,4 +44,3 @@ nginx -t
 
 # Reload Nginx to apply changes
 service nginx reload
-

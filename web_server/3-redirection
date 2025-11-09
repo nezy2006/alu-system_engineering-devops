@@ -11,8 +11,9 @@ service nginx start
 # Create a simple homepage
 echo "Holberton School" > /var/www/html/index.html
 
-# Configure redirection in default site
-cat <<EOF > /etc/nginx/sites-available/default
+# Configure redirection in default
+cat > /etc/nginx/sites-available/default << 'EOF'
+
 server {
     listen 80 default_server;
     listen [::]:80 default_server;
@@ -27,11 +28,12 @@ server {
     }
 
     location / {
-        try_files \$uri \$uri/ =404;
+        try_files $uri $uri/ =404;
+
     }
 }
 EOF
 
 # Restart nginx to apply configuration
-service nginx restart
+service nginx reload
 

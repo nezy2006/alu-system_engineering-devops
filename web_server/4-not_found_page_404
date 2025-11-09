@@ -10,7 +10,7 @@ apt-get install -y nginx
 # Start nginx
 service nginx start
 
-# Create a homepage
+# Create homepage
 echo "Holberton School" > /var/www/html/index.html
 
 # Create the custom 404 page
@@ -21,7 +21,7 @@ if [ ! -f /etc/nginx/sites-available/default.bak ]; then
     cp /etc/nginx/sites-available/default /etc/nginx/sites-available/default.bak
 fi
 
-# Replace the default server block with proper 404 handling
+# Replace default server block with proper 404 handling
 cat > /etc/nginx/sites-available/default << 'EOF'
 server {
     listen 80 default_server;
@@ -33,21 +33,19 @@ server {
     server_name _;
 
     location / {
-        try_files $uri $uri/ /404.html;
-    }
-
-    # Ensure /404.html returns 404 status code
-    location = /404.html {
-        internal;
+        try_files $uri $uri/ =404;
     }
 
     error_page 404 /404.html;
+
+    location /404.html {
+        root /var/www/html;
+        internal;
+    }
 }
 EOF
 
-# Test nginx configuration
+# Reload Nginx
 nginx -t
-
-# Reload nginx to apply changes
 service nginx reload
 

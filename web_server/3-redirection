@@ -1,39 +1,33 @@
 #!/usr/bin/env bash
-# Configures Nginx to redirect /redirect_me to another page (301 Moved Permanently)
+# Configures Nginx on a new Ubuntu machine to redirect /redirect_me permanently
 
-# Update and install nginx
+# Exit immediately if a command fails
+set -e
+
+# Update package list and install nginx
 apt-get update -y
 apt-get install -y nginx
 
-# Start nginx (without systemctl)
+# Start nginx service
 service nginx start
 
 # Create a simple homepage
 echo "Holberton School" > /var/www/html/index.html
 
-# Configure redirection in default
-cat > /etc/nginx/sites-available/default << 'EOF'
+# Backup default Nginx config if not already backed up
+if [ ! -f /etc/nginx/sites-available/default.bak ]; then
+    cp /etc/nginx/sites-available/default /etc/nginx/sites-available/default.bak
+fi
 
-server {
-    listen 80 default_server;
-    listen [::]:80 default_server;
+# Use sed to insert a location block for /redirect_me after server_name _;
+sed -i '/server_name _;/a \
+    location /redirect_me {\
+        return 301 https://www.youtube.com/watch?v=QH2-TGUlwu4;\
+    }' /etc/nginx/sites-available/default
 
-    root /var/www/html;
-    index index.html index.htm index.nginx-debian.html;
+# Test Nginx configuration
+nginx -t
 
-    server_name _;
-
-    location /redirect_me {
-        return 301 https://www.youtube.com/watch?v=QH2-TGUlwu4;
-    }
-
-    location / {
-        try_files $uri $uri/ =404;
-
-    }
-}
-EOF
-
-# Restart nginx to apply configuration
+# Reload Nginx to apply changes
 service nginx reload
 

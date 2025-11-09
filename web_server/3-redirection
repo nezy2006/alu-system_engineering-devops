@@ -1,22 +1,37 @@
 #!/usr/bin/env bash
-# Bash script to install Nginx and configure /redirect_me to permanently redirect (301)
+# Configures Nginx to redirect /redirect_me to another page (301 Moved Permanently)
 
-# Update Ubuntu package lists
+# Update and install nginx
 apt-get update -y
-
-# Install Nginx if not already installed
 apt-get install -y nginx
 
-# Start Nginx using service (without systemctl)
+# Start nginx (without systemctl)
 service nginx start
 
-# Replace default HTML page at root
+# Create a simple homepage
 echo "Holberton School" > /var/www/html/index.html
 
-# Add a location block for /redirect_me in the default site configuration
-# Using sed to insert the redirect after the server_name directive
-sed -i '/server_name _;/a \\n    location /redirect_me {\n        return 301 https://www.youtube.com/watch?v=QH2-TGUlwu4;\n    }' /etc/nginx/sites-available/default
+# Configure redirection in default site
+cat <<EOF > /etc/nginx/sites-available/default
+server {
+    listen 80 default_server;
+    listen [::]:80 default_server;
 
-# Reload Nginx to apply configuration changes
-service nginx reload
+    root /var/www/html;
+    index index.html index.htm index.nginx-debian.html;
+
+    server_name _;
+
+    location /redirect_me {
+        return 301 https://www.youtube.com/watch?v=QH2-TGUlwu4;
+    }
+
+    location / {
+        try_files \$uri \$uri/ =404;
+    }
+}
+EOF
+
+# Restart nginx to apply configuration
+service nginx restart
 

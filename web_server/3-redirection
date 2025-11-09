@@ -1,10 +1,8 @@
-#!/usr/bin/env bash
-# Configures Nginx on a new Ubuntu machine to redirect /redirect_me permanently
+onfigures Nginx on a new Ubuntu machine to redirect /redirect_me permanently
 
-# Exit immediately if a command fails
 set -e
 
-# Update package list and install nginx
+# Update and install nginx
 apt-get update -y
 apt-get install -y nginx
 
@@ -19,10 +17,26 @@ if [ ! -f /etc/nginx/sites-available/default.bak ]; then
     cp /etc/nginx/sites-available/default /etc/nginx/sites-available/default.bak
 fi
 
-# Use sed to insert a location block for /redirect_me after server_name
+# Replace the default config entirely with the proper server block
+cat > /etc/nginx/sites-available/default << 'EOF'
+server {
+    listen 80 default_server;
+    listen [::]:80 default_server;
 
-sed -i "/server_name _;/a location /redirect_me {\n    return 301 https://www.youtube.com/watch?v=QH2-TGUlwu4;\n}" /etc/nginx/sites-available/default
+    root /var/www/html;
+    index index.html index.htm index.nginx-debian.html;
 
+    server_name _;
+
+    location /redirect_me {
+        return 301 https://www.youtube.com/watch?v=QH2-TGUlwu4;
+    }
+
+    location / {
+        try_files $uri $uri/ =404;
+    }
+}
+EOF
 
 # Test Nginx configuration
 nginx -t
